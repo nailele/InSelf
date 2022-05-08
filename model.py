@@ -106,7 +106,9 @@ def psy_work_active(message):
 
 @bot.message_handler(commands=['Закончить'])
 def psy_work_paused(message):
-    session.query(Form).filter(Form.psy_id == message.from_user.id).update({'psy_status': 'Paused'})
+    id = session.query(Form).filter(message.from_user.id == Form.psy_id).first()
+    msg = bot.send_message(id.user_id,'Психолог остановил беседу')
+    session.query(Form).filter(Form.psy_id == message.from_user.id).update({'psy_status': 'Paused', 'user_id': None})
     session.commit()
     msg = bot.send_message(message.from_user.id, 'Ваша анкета неактивна! Хорошего отдыха',
                            reply_markup=psy_work_start_markup())
